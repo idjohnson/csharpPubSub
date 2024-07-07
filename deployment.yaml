@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daprpubsub
+  labels:
+    app: daprpubsub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daprpubsub
+  template:
+    metadata:
+      labels:
+        app: daprpubsub
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "daprpubsub"
+        dapr.io/app-port: "5009"
+    spec:
+      containers:
+      - name: daprpubsub
+        image: idjohnson/fbdaprpubsubtest:0.5
+        ports:
+        - containerPort: 5009
+        imagePullPolicy: Always
+---
+apiVersion: dapr.io/v2alpha1
+kind: Subscription
+metadata:
+  name: bbb-to-daprpubsub
+spec:
+  topic: BBB
+  routes: 
+    default: /BBB
+  pubsubname: pubsub
+scopes:
+- daprpubsub

@@ -8,20 +8,19 @@ app.UseCloudEvents();
 
 app.MapSubscribeHandler();
 
+app.MapGet("/", () => "Hello World!");
 
-//app.MapGet("/", () => "Hello World!");
-
-app.MapPost("/A", [Topic("pubsub", "A")] (ILogger<Program> logger, MessageEvent item) => {
+app.MapPost("/AAA", [Topic("pubsub", "AAA")] (ILogger<Program> logger, MessageEvent item) => {
     Console.WriteLine($"{item.MessageType}: {item.Message}");
     return Results.Ok();
 });
 
-app.MapPost("/B", [Topic("pubsub", "B")] (ILogger<Program> logger, MessageEvent item) => {
+app.MapPost("/BBB", [Topic("pubsub", "BBB")] (ILogger<Program> logger, MessageEvent item) => {
     Console.WriteLine($"{item.MessageType}: {item.Message}");
     return Results.Ok();
 });
 
-app.MapPost("/C", [Topic("pubsub", "C")] (ILogger<Program> logger, Dictionary<string, string> item) => {
+app.MapPost("/CCC", [Topic("pubsub", "CCC")] (ILogger<Program> logger, Dictionary<string, string> item) => {
     Console.WriteLine($"{item["messageType"]}: {item["message"]}");
     return Results.Ok();
 });
