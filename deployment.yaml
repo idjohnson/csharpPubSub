@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: daprpubsub
-        image: idjohnson/fbdaprpubsubtest:0.7
+        image: idjohnson/fbdaprpubsubtest:0.8
         ports:
         - containerPort: 5009
         imagePullPolicy: Always

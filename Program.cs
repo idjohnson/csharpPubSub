@@ -16,11 +16,11 @@ if (app.Environment.IsDevelopment()) {app.UseDeveloperExceptionPage();}
 app.MapGet("/", () => "Hello World!");
 
 // Dapr subscription in [Topic] routes orders topic to this route
-app.MapPost("/BBB", [Topic("pubsub", "BBB")] (Order order) => {
-    Console.WriteLine("Subscriber received : " + order);
-    return Results.Ok(order);
+app.MapPost("/BBB", [Topic("pubsub", "BBB")] (ILogger<Program> logger, MessageEvent item) => {
+    Console.WriteLine($"{item.MessageType}: {item.Message}");
+    return Results.Ok();
 });
 
 await app.RunAsync();
 
-public record Order([property: JsonPropertyName("orderId")] int OrderId);
+internal record MessageEvent(string MessageType, string Message);
