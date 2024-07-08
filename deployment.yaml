@@ -20,10 +20,20 @@ spec:
     spec:
       containers:
       - name: daprpubsub
-        image: idjohnson/fbdaprpubsubtest:0.8
+        image: idjohnson/fbdaprpubsubtest:1.0
         ports:
         - containerPort: 5009
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: AWX_BASEURI
+          value: "https://awx.freshbrewed.science/api/v2/job_templates/"
+        - name: AWX_USERNAME
+          value: "rundeck"
+        - name: AWX_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: awxpassword
+              key: AWX_PASSWORD
 ---
 apiVersion: dapr.io/v2alpha1
 kind: Subscription
