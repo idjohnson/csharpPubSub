@@ -1,31 +1,26 @@
+using System.Text.Json.Serialization;
 using Dapr;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var app = builder.Build();
 
-// Dapr configurations
+// Dapr will send serialized event object vs. being raw CloudEvent
 app.UseCloudEvents();
 
+// needed for Dapr pub/sub routing
 app.MapSubscribeHandler();
+
+if (app.Environment.IsDevelopment()) {app.UseDeveloperExceptionPage();}
 
 app.MapGet("/", () => "Hello World!");
 
-app.MapPost("/AAA", [Topic("pubsub", "AAA")] (ILogger<Program> logger, MessageEvent item) => {
-    Console.WriteLine($"{item.MessageType}: {item.Message}");
-    return Results.Ok();
+// Dapr subscription in [Topic] routes orders topic to this route
+app.MapPost("/BBB", [Topic("pubsub", "BBB")] (Order order) => {
+    Console.WriteLine("Subscriber received : " + order);
+    return Results.Ok(order);
 });
 
-app.MapPost("/BBB", [Topic("pubsub", "BBB")] (ILogger<Program> logger, MessageEvent item) => {
-    Console.WriteLine($"{item.MessageType}: {item.Message}");
-    return Results.Ok();
-});
+await app.RunAsync();
 
-app.MapPost("/CCC", [Topic("pubsub", "CCC")] (ILogger<Program> logger, Dictionary<string, string> item) => {
-    Console.WriteLine($"{item["messageType"]}: {item["message"]}");
-    return Results.Ok();
-});
-
-app.Run();
-
-internal record MessageEvent(string MessageType, string Message);
-
+public record Order([property: JsonPropertyName("orderId")] int OrderId);
